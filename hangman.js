@@ -57,7 +57,7 @@ function newGame() {
         console.log('')
         console.log(currentWord.wordRender())
         console.log('')
-        keepPromptingUser()
+        promptUser()
     } else {
         resetGuessesRemaining()
         newGame()
@@ -68,7 +68,7 @@ function resetGuessesRemaining() {
     guessesRemaining = 10
 }
 
-function keepPromptingUser() {
+function promptUser() {
     inquirer.prompt([
         {
             name: 'chosenLetter',
@@ -83,8 +83,11 @@ function keepPromptingUser() {
             }
         }
     ]).then(function(ltr) {
+
+        // turn letter into uppper case and store in variable
         var letterReturned = (ltr.chosenLetter).toUpperCase()
 
+        // check to see if you guessed that letter already and set flag to false
         var guessedAlready = false
         for (var i = 0; i < guessedLetters.length; i++) {
             if(letterReturned === guessedLetters[i]) {
@@ -93,18 +96,22 @@ function keepPromptingUser() {
         }
 
         if (guessedAlready === false) {
+            // push letter into array
             guessedLetters.push(letterReturned)
 
+            // variable to check if letter was in the word
             var found = currentWord.checkIfLetterFound(letterReturned)
 
             if (found === 0) {
                 console.log('Haha wrong guess!')
 
                 guessesRemaining--
+
+                // counter for hangman display
                 display++
 
                 console.log('Guesses reamaining: ' + guessesRemaining)
-                console.log(hangManDisplay[display - 1])
+                console.log(hangManDisplay[display - 1]) // prints the hangman display
 
                 console.log('---------------------------------------------------------')
                 console.log('')
@@ -131,18 +138,19 @@ function keepPromptingUser() {
                 }
             }
 
+            // if guessesRemaining and the current word isn't found prompt the user
             if (guessesRemaining > 0 && currentWord.wordFound === false) {
-                keepPromptingUser();
-            } else if (guessesRemaining === 0) {
+                promptUser();
+            } else if (guessesRemaining === 0) { // if you don't have any guesses left and haven't found the word you lose
                 console.log('')                
                 console.log('----- GAME OVER -----')
                 console.log('')
                 console.log('The word you were trying to guess was: ' + currentWord.word)
                 console.log('')                
             }
-        } else {
+        } else { // prompts the user that they guessed that letter already
             console.log('You"ve guessed that letter already, try again.')
-            keepPromptingUser();
+            promptUser();
         }
     })
 }
